@@ -1,0 +1,9 @@
+.masuk {
+    color: #0e8039;
+    background-color: #99f7bf;
+    display: flex;
+    justify-content: center;
+    padding: 4px 16px;
+    border-radius: 10px;
+    font-weight: bold;
+}
