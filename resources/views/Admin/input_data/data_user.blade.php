@@ -8,7 +8,7 @@
             </div>
             <div><button type="button" id="tambah" class="btn btn-primary">Tambah</button></div>
         </div>
-        <table class="table table-hover" id="myTable">
+        <table class="table table-hover" id="myTable" style="width:100%">
             <thead>
                 <tr>
                     <th><input type="checkbox" name="" id="head-cb"></th>
@@ -74,7 +74,8 @@
                             </div>
                             <div class="mb-3">
                                 <label for="" class="">Document</label>
-                                <input type="file" name="document" id="document" class="form-control" accept=".pdf">
+                                <input type="file" name="document[]" id="document" class="form-control" accept=".pdf"
+                                    multiple>
                                 <div id="error-document" class="text-danger"></div>
                             </div>
                         </div>
@@ -98,6 +99,8 @@
                 }
             });
             var table = $('#myTable').DataTable({
+                fixedHeader: true,
+                responsive: true,
                 processing: true,
                 serverside: true,
                 ajax: '/data-user',
@@ -143,9 +146,7 @@
                     {
                         name: 'document',
                         data: 'document',
-                        render: function(data) {
-                            return "<a href='storage/Document/" + data + "'>" + data + "</a>"
-                        }
+
                     },
                     {
                         name: 'proses_sertifikat',
@@ -199,7 +200,11 @@
                     formData.append('nomor_sertifikat', $('#nomor_sertifikat').val());
                     formData.append('desa', $('#desa').val());
                     formData.append('no_berkas', $('#no_berkas').val());
-                    formData.append('document', $('#document')[0].files[0]);
+                    var file = $('#document')[0].files;
+                    for (i = 0; i < file.length; i++) {
+                        formData.append('document[]', $('#document')[0].files[i]);
+                    }
+
                     $.ajax({
                         type: 'POST',
                         url: "purposes",

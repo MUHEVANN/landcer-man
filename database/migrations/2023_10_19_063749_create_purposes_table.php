@@ -20,9 +20,8 @@ return new class extends Migration
             $table->string('desa');
             $table->string('no_berkas');
             $table->string('proses_sertifikat')->default('masuk');
-            $table->string('document');
-            $table->timestamps();
 
+            $table->timestamps();
             $table->foreign('penanggung_jawab_id')->references('id')->on('penanggung_jawab')->onDelete('cascade');
         });
     }

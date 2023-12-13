@@ -24,7 +24,7 @@
                 </div>
             </div>
         </div>
-        <table class="table table-hover" id="myTable">
+        <table class="table table-hover" id="myTable" style="width:100%">
             <thead>
                 <tr>
                     <th><input type="checkbox" name="" id="head-cb"></th>
@@ -111,6 +111,8 @@
                 }
             });
             var table = $('#myTable').DataTable({
+                fixedHeader: true,
+                responsive: true,
                 processing: true,
                 serverside: true,
                 ajax: '/data-user-keluar',
@@ -156,11 +158,7 @@
                     {
                         name: 'document',
                         data: 'document',
-                        render: function(data) {
-                            return "<a href='{{ url('storage/Document') }}" + '/' + data + "'>" +
-                                data +
-                                "</a>"
-                        }
+
                     },
                     {
                         name: 'proses_sertifikat',

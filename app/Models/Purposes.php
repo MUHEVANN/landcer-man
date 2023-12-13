@@ -24,4 +24,9 @@ class Purposes extends Model
     {
         return $this->belongsTo(PenanggungJawab::class, 'penanggung_jawab_id', 'id');
     }
+
+    public function document()
+    {
+        return $this->hasMany(Document::class, 'purpose_id', 'id');
+    }
 }
