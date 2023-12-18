@@ -35,3 +35,6 @@ Route::post('/penanggung-jawab', [PenanggungJawabController::class, 'store']);
 Route::delete('/penanggung-jawab/{id}', [PenanggungJawabController::class, 'delete']);
 Route::get('/penanggung-jawab/{id}', [PenanggungJawabController::class, 'edit']);
 Route::post('/penanggung/{id}', [PenanggungJawabController::class, 'update']);
+Route::get('/', function () {
+    return redirect('/input-data-page');
+});

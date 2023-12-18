@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('document');
             $table->unsignedBigInteger('purpose_id');
             $table->timestamps();
-            $table->foreign('purpose_id')->references('id')->on('purposes');
+            $table->foreign('purpose_id')->references('id')->on('purposes')->onDelete('cascade');
         });
     }
 

@@ -74,8 +74,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="" class="">Document</label>
-                                <input type="file" name="document[]" id="document" class="form-control" accept=".pdf"
-                                    multiple>
+                                <input type="file" name="document[]" id="document" class="form-control" multiple>
                                 <div id="error-document" class="text-danger"></div>
                             </div>
                         </div>
