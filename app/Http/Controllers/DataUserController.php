@@ -16,6 +16,7 @@ class DataUserController extends Controller
     public function index()
     {
         $penanggung_jawab = PenanggungJawab::all();
+
         return view('Admin.input_data.data_user', compact('penanggung_jawab'));
     }
 
@@ -23,6 +24,7 @@ class DataUserController extends Controller
     {
         $data = Purposes::with('penanggung_jawab', 'document')->where('proses_sertifikat', 'masuk')->get();
         return DataTables::of($data)
+            ->addIndexColumn()
             ->addColumn('action', function ($data) {
                 return "<div class='d-flex align-items-center'><a href='#' data-id='$data->id' class='edit menu-icon tf-icons me-2'><i class='bx bx-edit-alt'></i></a><a href='#' data-id='$data->id' class='hapus' style='color:red;'><i class='bx bx-trash'></i></a><a href='#' class='end' data-id=' $data->id'><i class='bx bx-check'></i></a></div>";
             })->addColumn('checkbox', function ($data) {
@@ -47,12 +49,10 @@ class DataUserController extends Controller
     {
         $validate = Validator::make($request->all(), [
             'penanggung_jawab_id' => 'required',
-            'nama_pemohon' => 'required',
-            'domisili' => 'required',
-            'nomor_sertifikat' => 'required',
-            'desa' => 'required',
-            'no_berkas' => 'required',
             'document.*' => 'required',
+            'jenis_pekerjaan' => 'required',
+
+
         ]);
         if ($validate->fails()) {
             return response()->json(['error' => $validate->messages()]);
@@ -61,9 +61,12 @@ class DataUserController extends Controller
             'penanggung_jawab_id' => $request->penanggung_jawab_id,
             'nama_pemohon' => $request->nama_pemohon,
             'domisili' => $request->domisili,
-            'nomor_sertifikat' => $request->nomor_sertifikat,
-            'desa' => $request->desa,
-            'no_berkas' => $request->no_berkas,
+            'no_akta' => $request->no_akta,
+            'bank_name' => $request->bank_name,
+            'keterangan' => $request->keterangan,
+            'jenis_pekerjaan' => $request->jenis_pekerjaan,
+            'proses_permohonan' => $request->proses_permohonan,
+
         ]);
 
         foreach ($request->file('document') as $file) {
@@ -88,11 +91,8 @@ class DataUserController extends Controller
     {
         $validate = Validator::make($request->all(), [
             'penanggung_jawab_id' => 'required',
-            'nama_pemohon' => 'required',
-            'domisili' => 'required',
-            'nomor_sertifikat' => 'required',
-            'desa' => 'required',
-            'no_berkas' => 'required',
+            'document.*' => 'required',
+            'jenis_pekerjaan' => 'required',
         ]);
         if ($validate->fails()) {
             return response()->json(['error' => $validate->messages()]);
@@ -100,18 +100,27 @@ class DataUserController extends Controller
 
         $purposes = Purposes::find($id);
         if ($request->hasFile('document')) {
-            $document_file = $request->file('document');
-            $document_name = Str::random(10) . "." . $document_file->getClientOriginalExtension();
-            $document_file->storeAs('public/Document', $document_name);
-            Storage::delete('public/Document/' . $purposes->document);
-            $purposes->document = $document_name;
+            $docs = Document::where('purpose_id', $purposes->id)->get();
+            foreach ($docs as $doc) {
+                $doc->delete();
+            }
+            foreach ($request->file('document') as $file) {
+                $document_name = Str::random(10) . "." . $file->getClientOriginalExtension();
+                $file->storeAs('public/Document', $document_name);
+                Storage::delete('public/Document/' . $purposes->document);
+                Document::create([
+                    'document' => $document_name,
+                    'purpose_id' => $purposes->id
+                ]);
+            }
         }
+
         $purposes->penanggung_jawab_id = $request->penanggung_jawab_id;
         $purposes->nama_pemohon = $request->nama_pemohon;
-        $purposes->domisili = $request->domisili;
-        $purposes->nomor_sertifikat = $request->nomor_sertifikat;
-        $purposes->desa = $request->desa;
-        $purposes->no_berkas = $request->no_berkas;
+        $purposes->no_akta = $request->no_akta;
+        $purposes->jenis_pekerjaan = $request->jenis_pekerjaan;
+        $purposes->proses_permohonan = $request->proses_permohonan;
+        $purposes->keterangan = $request->keterangan;
         $purposes->save();
 
         return response()->json(['success' => 'Berhasil mengupdate']);

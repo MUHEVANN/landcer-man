@@ -12,12 +12,13 @@ class Purposes extends Model
     protected $fillable = [
         'nama_pemohon',
         'penanggung_jawab_id',
-        'domisili',
-        'nomor_sertifikat',
-        'no_berkas',
+        'no_akta',
+        'bank_name',
+        'proses_permohonan',
+        'jenis_pekerjaan',
+        'keterangan',
         'proses_sertifikat',
-        'document',
-        'desa'
+
     ];
 
     public function penanggung_jawab()

@@ -7,3 +7,10 @@
     border-radius: 10px;
     font-weight: bold;
 }
+
+.container-th th span {
+    min-width: 5px;
+}
+tbody td {
+    min-width: 5px;
+}

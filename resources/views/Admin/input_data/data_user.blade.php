@@ -10,21 +10,25 @@
         </div>
         <table class="table table-hover" id="myTable" style="width:100%">
             <thead>
-                <tr>
+                <tr class="">
                     <th><input type="checkbox" name="" id="head-cb"></th>
-                    <th>Penanggung Jawab</th>
-                    <th>Pemohon</th>
-                    <th>Domisili</th>
-                    <th>No. Sertifikat</th>
-                    <th>Desa</th>
-                    <th>No. Berkas</th>
+                    <th>No</th>
+                    <th>Tanggal</th>
+                    <th>Jenis Pekerjaan</th>
+                    <th>No Akta</th>
+                    <th>Proses Permohonan </th>
+                    <th>Nama Bank</th>
+                    <th>Pihak</th>
+                    <th>Keterangan</th>
                     <th>Document</th>
+                    <th>Penanggung Jawab</th>
                     <th>Status</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
             <tbody></tbody>
         </table>
+
         <div class="modal fade" id="tambah-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
             aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -35,6 +39,43 @@
                     </div>
                     <form id="form-id">
                         <div class="modal-body">
+
+                            <div class="mb-3">
+                                <label for="" class="">Jenis Pekerjaan</label>
+                                <select name="jenis_pekerjaan" id="jenis_pekerjaan" class="form-control">
+                                    <option value="">Pilih salah satu</option>
+                                    <option value="PPAT">PPAT</option>
+                                    <option value="NOTARIS">NOTARIS</option>
+                                </select>
+                                <div id="error-jenis_pekerjaan" class="text-danger"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="" class="">Nama Pemohon</label>
+                                <input type="text" name="nama_pemohon" id="nama_pemohon"
+                                    class="form-control text-capitalize">
+                                <div id="error-nama_pemohon" class="text-danger"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="" class="">No. Akta</label>
+                                <input type="number" name="no_akta" id="no_akta" class="form-control">
+                                <div id="error-no_akta" class="text-danger"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="" class="">Proses Permohonan</label>
+                                <input type="text" name="proses_permohonan" id="proses_permohonan" class="form-control">
+                                <div id="error-proses_permohonan" class="text-danger"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="" class="">Nama Bank</label>
+                                <input type="text" name="bank_name" id="bank_name" class="form-control">
+                                <div id="error-bank_name" class="text-danger"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="" class="">Document</label>
+                                <input type="file" name="document[]" id="document" class="form-control" multiple>
+                                <div id="error-document" class="text-danger"></div>
+                            </div>
                             <div class="mb-3">
                                 <label for="" class="">Nama Penanggung Jawab</label>
                                 <select name="" id="penanggung_jawab_id" class="form-control text-capitalize">
@@ -47,35 +88,9 @@
                                 <div id="error-penanggung_jawab_id" class="text-danger"></div>
                             </div>
                             <div class="mb-3">
-                                <label for="" class="">Nama Pemohon</label>
-                                <input type="text" name="nama_pemohon" id="nama_pemohon"
-                                    class="form-control text-capitalize">
-                                <div id="error-nama_pemohon" class="text-danger"></div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="" class="">Domisili</label>
-                                <input type="text" name="domisili" id="domisili" class="form-control text-capitalize">
-                                <div id="error-domisili" class="text-danger"></div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="" class="">No. Sertifikat</label>
-                                <input type="number" name="nomor_sertifikat" id="nomor_sertifikat" class="form-control">
-                                <div id="error-nomor_sertifikat" class="text-danger"></div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="" class="">Desa</label>
-                                <input type="text" name="desa" id="desa" class="form-control text-capitalize">
-                                <div id="error-desa" class="text-danger"></div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="" class="">No. Berkas</label>
-                                <input type="nomber" name="no_berkas" id="no_berkas" class="form-control">
-                                <div id="error-no_berkas" class="text-danger"></div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="" class="">Document</label>
-                                <input type="file" name="document[]" id="document" class="form-control" multiple>
-                                <div id="error-document" class="text-danger"></div>
+                                <label for="" class="">Keterangan</label>
+                                <textarea name="keterangan" id="keterangan" cols="30" rows="10" class="form-control"></textarea>
+                                <div id="error-keterangan" class="text-danger"></div>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -107,44 +122,51 @@
                         data: 'checkbox',
                         name: 'checkbox',
                     }, {
-                        name: 'penanggung_jawab.nama_penanggung_jawab',
-                        data: 'penanggung_jawab.nama_penanggung_jawab',
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                    }, {
+                        name: 'created_at',
+                        data: 'created_at',
                         render: function(data) {
-                            return "<span class='text-capitalize '>" + data + "</span>"
+                            var date = new Date(data)
+                            let month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                                "Juli", "Agustus", "September", "Oktober", "November",
+                                "Desember"
+                            ]
+                            let m = month[date.getMonth()];
+                            let d = date.getDate();
+                            let y = date.getFullYear();
+
+                            return "<span >" + d + " " + m + " " + y + "</span>"
                         }
-                    },
-                    {
+
+                    }, {
+                        data: 'jenis_pekerjaan',
+                        name: 'jenis_pekerjaan',
+                    }, {
+                        data: 'no_akta',
+                        name: 'no_akta',
+                    }, {
+                        data: 'proses_permohonan',
+                        name: 'proses_permohonan',
+                    }, {
+                        data: 'bank_name',
+                        name: 'bank_name',
+                    }, {
                         name: 'nama_pemohon',
                         data: 'nama_pemohon',
-                        render: function(data) {
-                            return "<span class='text-capitalize '>" + data + "</span>"
-                        }
-                    },
-                    {
-                        name: 'domisili',
-                        data: 'domisili',
-                        render: function(data) {
-                            return "<span class='text-capitalize '>" + data + "</span>"
-                        }
-                    },
-                    {
-                        name: 'nomor_sertifikat',
-                        data: 'nomor_sertifikat',
-                    },
-                    {
-                        name: 'desa',
-                        data: 'desa',
-                        render: function(data) {
-                            return "<span class='text-capitalize '>" + data + "</span>"
-                        }
-                    },
-                    {
-                        name: 'no_berkas',
-                        data: 'no_berkas',
-                    },
-                    {
+
+                    }, {
+                        name: 'keterangan',
+                        data: 'keterangan',
+
+                    }, {
                         name: 'document',
                         data: 'document',
+
+                    }, {
+                        name: 'penanggung_jawab.nama_penanggung_jawab',
+                        data: 'penanggung_jawab.nama_penanggung_jawab',
 
                     },
                     {
@@ -195,10 +217,11 @@
                     var formData = new FormData();
                     formData.append('penanggung_jawab_id', $('#penanggung_jawab_id').val());
                     formData.append('nama_pemohon', $('#nama_pemohon').val());
-                    formData.append('domisili', $('#domisili').val());
-                    formData.append('nomor_sertifikat', $('#nomor_sertifikat').val());
-                    formData.append('desa', $('#desa').val());
-                    formData.append('no_berkas', $('#no_berkas').val());
+                    formData.append('no_akta', $('#no_akta').val());
+                    formData.append('jenis_pekerjaan', $('#jenis_pekerjaan').val());
+                    formData.append('proses_permohonan', $('#proses_permohonan').val());
+                    formData.append('bank_name', $('#bank_name').val());
+                    formData.append('keterangan', $('#keterangan').val());
                     var file = $('#document')[0].files;
                     for (i = 0; i < file.length; i++) {
                         formData.append('document[]', $('#document')[0].files[i]);
@@ -215,29 +238,21 @@
                             if (response.error) {
                                 $('#error-penanggung_jawab_id').text(response.error
                                     .penanggung_jawab_id);
-                                $('#error-nama_pemohon').text(response.error
-                                    .nama_pemohon);
-                                $('#error-domisili').text(response.error.domisili);
-                                $('#error-nomor_sertifikat').text(response.error
-                                    .nomor_sertifikat);
-                                $('#error-desa').text(response.error.desa);
-                                $('#error-no_berkas').text(response.error.no_berkas);
+                                $('#error-jenis_pekerjaan').text(response.error
+                                    .jenis_pekerjaan);
                                 $('#error-document').text(response.error.document);
                             } else {
                                 $('#tambah-modal').modal('hide');
                                 $('#penanggung_jawab_id').val('');
                                 $('#nama_pemohon').val('');
-                                $('#domisili').val('');
-                                $('#nomor_sertifikat').val('');
-                                $('#desa').val('');
-                                $('#no_berkas').val('');
+                                $('#no_akta').val('');
+                                $('#jenis_pekerjaan').val('');
+                                $('#proses_permohonan').val('');
+                                $('#bank_name').val('');
+                                $('#keterangan').val('');
                                 $('#document').val('');
                                 $('#error-penanggung_jawab_id').text("");
-                                $('#error-nama_pemohon').text("");
-                                $('#error-domisili').text("");
-                                $('#error-nomor_sertifikat').text("");
-                                $('#error-desa').text("");
-                                $('#error-no_berkas').text("");
+                                $('#error-jenis_pekerjaan').text("");
                                 $('#error-document').text("");
                                 const Toast = Swal.mixin({
                                     width: 400,
@@ -268,19 +283,17 @@
             });
             $('.close').click(function() {
                 $('#tambah-modal').modal('hide');
+                $('#tambah-modal').modal('hide');
                 $('#penanggung_jawab_id').val('');
                 $('#nama_pemohon').val('');
-                $('#domisili').val('');
-                $('#nomor_sertifikat').val('');
-                $('#desa').val('');
-                $('#no_berkas').val('');
+                $('#no_akta').val('');
+                $('#jenis_pekerjaan').val('');
+                $('#proses_permohonan').val('');
+                $('#bank_name').val('');
+                $('#keterangan').val('');
                 $('#document').val('');
                 $('#error-penanggung_jawab_id').text("");
-                $('#error-nama_pemohon').text("");
-                $('#error-domisili').text("");
-                $('#error-nomor_sertifikat').text("");
-                $('#error-desa').text("");
-                $('#error-no_berkas').text("");
+                $('#error-jenis_pekerjaan').text("");
                 $('#error-document').text("");
             });
 
@@ -296,11 +309,13 @@
                         $('#penanggung_jawab_id').val(response.success
                             .penanggung_jawab_id);
                         $('#nama_pemohon').val(response.success.nama_pemohon);
-                        $('#domisili').val(response.success.domisili);
-                        $('#nomor_sertifikat').val(response.success
-                            .nomor_sertifikat);
-                        $('#desa').val(response.success.desa);
-                        $('#no_berkas').val(response.success.no_berkas);
+                        $('#no_akta').val(response.success.no_akta);
+                        $('#jenis_pekerjaan').val(response.success
+                            .jenis_pekerjaan);
+                        $('#proses_permohonan').val(response.success.proses_permohonan);
+                        $('#document').val(response.success.document);
+                        $('#bank_name').val(response.success.bank_name);
+                        $('#keterangan').val(response.success.keterangan);
                     },
                 });
                 $('.submit').off('click');
@@ -309,12 +324,16 @@
                     var formData = new FormData();
                     formData.append('penanggung_jawab_id', $('#penanggung_jawab_id').val());
                     formData.append('nama_pemohon', $('#nama_pemohon').val());
-                    formData.append('domisili', $('#domisili').val());
-                    formData.append('nomor_sertifikat', $('#nomor_sertifikat').val());
-                    formData.append('desa', $('#desa').val());
-                    formData.append('no_berkas', $('#no_berkas').val());
-                    formData.append('document', $('#document')[0].files[0]);
-                    console.log(formData);
+                    formData.append('no_akta', $('#no_akta').val());
+                    formData.append('jenis_pekerjaan', $('#jenis_pekerjaan').val());
+                    formData.append('proses_permohonan', $('#proses_permohonan').val());
+                    formData.append('bank_name', $('#bank_name').val());
+                    formData.append('keterangan', $('#keterangan').val());
+                    var file = $('#document')[0].files;
+                    for (i = 0; i < file.length; i++) {
+                        formData.append('document[]', $('#document')[0].files[i]);
+                    }
+
                     $.ajax({
                         method: 'POST',
                         url: 'purposes/' + id,
@@ -325,20 +344,16 @@
                             console.log(response);
                             if (response[0] === 'error') {
                                 $('#error-penanggung_jawab_id').text(response[1]
-                                    .benefit);
-                                $('#error-nama_pemohon').text(response[1].name);
-                                $('#error-domisili').text(response[1].desc);
-                                $('#error-nomor_sertifikat').text(response[1]
-                                    .kualifikasi);
-                                $('#error-desa').text(response[1].gambar);
-                                $('#error-no_berkas').text(response[1].deadline);
+                                    .penanggung_jawab_id);
+                                $('#error-jenis_pekerjaan').text(response[1].gambar);
+                                $('#error-document').text(response[1].document);
                             } else {
                                 $('#penanggung_jawab_id').val('');
                                 $('#nama_pemohon').val('');
-                                $('#domisili').val('');
-                                $('#nomor_sertifikat').val('');
-                                $('#desa').val("");
-                                $('#no_berkas').val("");
+                                $('#no_akta').val('');
+                                $('#proses_permohonan').val('');
+                                $('#jenis_pekerjaan').val("");
+                                $('#document').val("");
                                 $('#tambah-modal').modal('hide');
                                 const Toast = Swal.mixin({
                                     width: 400,

@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('purposes', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('penanggung_jawab_id');
-            $table->string('nama_pemohon');
-            $table->string('domisili');
-            $table->string('nomor_sertifikat');
-            $table->string('desa');
-            $table->string('no_berkas');
+            $table->string('nama_pemohon')->nullable();
+            $table->string('proses_permohonan')->nullable();
+            $table->string('no_akta')->nullable();
+            $table->string('bank_name')->nullable();
+            $table->string('jenis_pekerjaan')->enum(['PPAT', "NOTARIS"]);
             $table->string('proses_sertifikat')->default('masuk');
-
+            $table->text('keterangan')->nullable();
             $table->timestamps();
             $table->foreign('penanggung_jawab_id')->references('id')->on('penanggung_jawab')->onDelete('cascade');
         });

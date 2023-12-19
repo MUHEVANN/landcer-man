@@ -20,6 +20,7 @@ class DataUserKeluar extends Controller
     {
         $data = Purposes::with('penanggung_jawab', 'document')->get();
         return DataTables::of($data)
+            ->addIndexColumn()
             ->addColumn('action', function ($data) {
                 return "<a href='#' data-id='$data->id' class='edit menu-icon tf-icons me-2'><i class='bx bx-edit-alt'></i></a><a href='#' data-id='$data->id' class='hapus' style='color:red;'><i class='bx bx-trash'></i></a>";
             })->addColumn('checkbox', function ($data) {
