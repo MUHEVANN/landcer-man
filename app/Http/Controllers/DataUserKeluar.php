@@ -25,7 +25,9 @@ class DataUserKeluar extends Controller
                 return "<a href='#' data-id='$data->id' class='edit menu-icon tf-icons me-2'><i class='bx bx-edit-alt'></i></a><a href='#' data-id='$data->id' class='hapus' style='color:red;'><i class='bx bx-trash'></i></a>";
             })->addColumn('checkbox', function ($data) {
                 return "<input type='checkbox' class='child-cb' value='$data->id'/>";
-            })->addColumn('document', function ($data) {; // Assume 'document' is the relationship method
+            })->addColumn('proses_sertifikat', function ($data) {
+                return $data->proses_sertifikat === 'masuk' ? "<span class='badge bg-success'>Masuk</span>" : "<span class='badge bg-danger'>Keluar</span>";
+            })->addColumn('document', function ($data) {
 
                 // Process the array of documents and render HTML
                 $html = '<ul>';
@@ -37,7 +39,7 @@ class DataUserKeluar extends Controller
 
                 return $html;
             })
-            ->rawColumns(['action', 'checkbox', 'document'])
+            ->rawColumns(['action', 'checkbox', 'document', 'proses_sertifikat'])
             ->make(true);
     }
 }

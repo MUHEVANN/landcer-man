@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\PurposeExport;
 use App\Models\Document;
 use App\Models\PenanggungJawab;
 use App\Models\Purposes;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -27,9 +29,14 @@ class DataUserController extends Controller
             ->addIndexColumn()
             ->addColumn('action', function ($data) {
                 return "<div class='d-flex align-items-center'><a href='#' data-id='$data->id' class='edit menu-icon tf-icons me-2'><i class='bx bx-edit-alt'></i></a><a href='#' data-id='$data->id' class='hapus' style='color:red;'><i class='bx bx-trash'></i></a><a href='#' class='end' data-id=' $data->id'><i class='bx bx-check'></i></a></div>";
-            })->addColumn('checkbox', function ($data) {
+            })
+            ->addColumn('checkbox', function ($data) {
                 return "<input type='checkbox' class='child-cb' value='$data->id'/>";
-            })->addColumn('document', function ($data) {; // Assume 'document' is the relationship method
+            })
+            ->addColumn('proses_sertifikat', function ($data) {
+                return $data->proses_sertifikat === 'masuk' ? "<span class='badge bg-success'>Masuk</span>" : "<span class='badge bg-danger'>Keluar</span>";
+            })
+            ->addColumn('document', function ($data) {; // Assume 'document' is the relationship method
 
                 // Process the array of documents and render HTML
                 $html = '<ul>';
@@ -41,12 +48,13 @@ class DataUserController extends Controller
 
                 return $html;
             })
-            ->rawColumns(['action', 'checkbox', 'document'])
+            ->rawColumns(['action', 'checkbox', 'document', 'proses_sertifikat'])
             ->make(true);
     }
 
     public function create(Request $request)
     {
+
         $validate = Validator::make($request->all(), [
             'penanggung_jawab_id' => 'required',
             'document.*' => 'required',
@@ -66,6 +74,7 @@ class DataUserController extends Controller
             'keterangan' => $request->keterangan,
             'jenis_pekerjaan' => $request->jenis_pekerjaan,
             'proses_permohonan' => $request->proses_permohonan,
+            'tanggal' => $request->tanggal,
 
         ]);
 
@@ -77,8 +86,6 @@ class DataUserController extends Controller
                 'purpose_id' => $purposes->id
             ]);
         }
-
-
         return response()->json(['success' => 'Berhasil menambahkan data']);
     }
 
@@ -89,6 +96,7 @@ class DataUserController extends Controller
     }
     public function update(Request $request, $id)
     {
+
         $validate = Validator::make($request->all(), [
             'penanggung_jawab_id' => 'required',
             'document.*' => 'required',
@@ -114,13 +122,13 @@ class DataUserController extends Controller
                 ]);
             }
         }
-
         $purposes->penanggung_jawab_id = $request->penanggung_jawab_id;
         $purposes->nama_pemohon = $request->nama_pemohon;
         $purposes->no_akta = $request->no_akta;
         $purposes->jenis_pekerjaan = $request->jenis_pekerjaan;
         $purposes->proses_permohonan = $request->proses_permohonan;
         $purposes->keterangan = $request->keterangan;
+        $purposes->tanggal = $request->tanggal;
         $purposes->save();
 
         return response()->json(['success' => 'Berhasil mengupdate']);
@@ -140,5 +148,10 @@ class DataUserController extends Controller
         $purposes->save();
 
         return response()->json(['success' => $purposes->nama_pemohon . " berhasil diupdate"]);
+    }
+
+    public function export_purposes()
+    {
+        return (new PurposeExport)->download('purposes-' . Carbon::now()->format('YmdHis') . '.xlsx');
     }
 }

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('jenis_pekerjaan')->enum(['PPAT', "NOTARIS"]);
             $table->string('proses_sertifikat')->default('masuk');
             $table->text('keterangan')->nullable();
+            $table->text('tanggal');
             $table->timestamps();
             $table->foreign('penanggung_jawab_id')->references('id')->on('penanggung_jawab')->onDelete('cascade');
         });

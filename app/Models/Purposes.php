@@ -18,7 +18,7 @@ class Purposes extends Model
         'jenis_pekerjaan',
         'keterangan',
         'proses_sertifikat',
-
+        'tanggal'
     ];
 
     public function penanggung_jawab()

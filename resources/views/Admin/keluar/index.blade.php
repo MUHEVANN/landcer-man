@@ -2,7 +2,7 @@
 @section('content')
     <div class="container card py-5">
 
-        <div class="mb-3 row">
+        <div class="mb-3 row align-items-center d-flex ">
             <div class="col-3">
                 <button type="button" onclick="hapus()" id="hapus" class="btn btn-danger" disabled>Hapus</button>
             </div>
@@ -13,6 +13,13 @@
                         @foreach ($penanggung_jawab as $item)
                             <option value="{{ $item->nama_penanggung_jawab }}">{{ $item->nama_penanggung_jawab }}</option>
                         @endforeach
+                    </select>
+                </div>
+                <div class="col-3">
+                    <select name="status" id="jenis_pekerjaan" class="form-control">
+                        <option value="">Jenis Pekerjaan</option>
+                        <option value="PPAT">PPAT</option>
+                        <option value="NOTARIS">NOTARIS</option>
                     </select>
                 </div>
                 <div class="col-3">
@@ -55,6 +62,11 @@
                         <div class="modal-body">
 
                             <div class="mb-3">
+                                <label for="" class="">Tanggal Masuk</label>
+                                <input type="date" name="tanggal" id="tanggal" class="form-control">
+                                <div id="error-tanggal" class="text-danger"></div>
+                            </div>
+                            <div class="mb-3">
                                 <label for="" class="">Jenis Pekerjaan</label>
                                 <select name="jenis_pekerjaan" id="jenis_pekerjaan" class="form-control">
                                     <option value="">Pilih salah satu</option>
@@ -84,7 +96,6 @@
                                 <input type="text" name="bank_name" id="bank_name" class="form-control">
                                 <div id="error-bank_name" class="text-danger"></div>
                             </div>
-
                             <div class="mb-3">
                                 <label for="" class="">Document</label>
                                 <input type="file" name="document[]" id="document" class="form-control" multiple>
@@ -131,6 +142,9 @@
                 responsive: true,
                 processing: true,
                 serverside: true,
+                "search": {
+                    "smart": false
+                },
                 ajax: '/data-user-keluar',
                 columns: [{
                         data: 'checkbox',
@@ -139,8 +153,9 @@
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
                     }, {
-                        name: 'created_at',
-                        data: 'created_at',
+                        name: 'tanggal',
+                        data: 'tanggal',
+
                         render: function(data) {
                             var date = new Date(data)
                             let month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
@@ -151,7 +166,7 @@
                             let d = date.getDate();
                             let y = date.getFullYear();
 
-                            return "<span >" + d + " " + m + " " + y + "</span>"
+                            return "<span class='text-nowrap'>" + d + " " + m + " " + y + "</span>"
                         }
 
                     }, {
@@ -186,9 +201,6 @@
                     {
                         name: 'proses_sertifikat',
                         data: 'proses_sertifikat',
-                        render: function(data) {
-                            return "<div class='masuk'><span>" + data + "</span></div>"
-                        }
                     },
                     {
                         name: 'action',
@@ -227,6 +239,11 @@
                 e.preventDefault();
                 table.columns(11).search(val).draw();
             });
+            $('#jenis_pekerjaan').change(function(e) {
+                var val = $(this).val();
+                e.preventDefault();
+                table.columns(3).search(val).draw();
+            });
             $('#select_penanggung_jawab').change(function(e) {
                 var val = $(this).val();
                 e.preventDefault();
@@ -236,10 +253,11 @@
                 $('#tambah-modal').modal('hide');
                 $('#penanggung_jawab_id').val('');
                 $('#nama_pemohon').val('');
-                $('#domisili').val('');
-                $('#nomor_sertifikat').val('');
-                $('#desa').val('');
-                $('#no_berkas').val('');
+                $('#no_akta').val('');
+                $('#jenis_pekerjaan').val('');
+                $('#proses_permohonan').val('');
+                $('#bank_name').val('');
+                $('#keterangan').val('');
                 $('#document').val('');
                 $('#error-penanggung_jawab_id').text("");
                 $('#error-nama_pemohon').text("");
@@ -269,6 +287,7 @@
                         $('#document').val(response.success.document);
                         $('#bank_name').val(response.success.bank_name);
                         $('#keterangan').val(response.success.keterangan);
+                        $('#tanggal').val(response.success.tanggal);
                     },
                 });
                 $('.submit').off('click');
@@ -282,11 +301,11 @@
                     formData.append('proses_permohonan', $('#proses_permohonan').val());
                     formData.append('bank_name', $('#bank_name').val());
                     formData.append('keterangan', $('#keterangan').val());
+                    formData.append('tanggal', $('#tanggal').val());
                     var file = $('#document')[0].files;
                     for (i = 0; i < file.length; i++) {
                         formData.append('document[]', $('#document')[0].files[i]);
                     }
-                    console.log(formData);
                     $.ajax({
                         method: 'POST',
                         url: "{{ url('purposes') }}" + '/' + id,
@@ -307,6 +326,9 @@
                                 $('#proses_permohonan').val('');
                                 $('#jenis_pekerjaan').val("");
                                 $('#document').val("");
+                                $('#tanggal').val("");
+                                $('#bank_name').val("");
+                                $('#tanggal').val("");
                                 $('#tambah-modal').modal('hide');
                                 const Toast = Swal.mixin({
                                     width: 400,

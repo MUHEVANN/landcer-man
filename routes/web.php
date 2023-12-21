@@ -38,3 +38,5 @@ Route::post('/penanggung/{id}', [PenanggungJawabController::class, 'update']);
 Route::get('/', function () {
     return redirect('/input-data-page');
 });
+
+Route::get('/export', [DataUserController::class, 'export_purposes'])->name('export');

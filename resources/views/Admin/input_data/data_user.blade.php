@@ -1,13 +1,17 @@
 @extends('layouts.dashboard')
 @section('content')
     <div class="container card py-5">
-
         <div class="d-flex justify-content-between mb-3">
-            <div class="mb-3">
+            <div class="mb-3 d-flex align-items-center gap-2">
                 <button type="button" onclick="hapus()" id="hapus" class="btn btn-danger" disabled>Hapus</button>
+                <button type="button" onclick="keluar()" id="keluar" class="btn btn-danger" disabled>Selesai</button>
+                <form action="{{ route('export') }}" method="GET">
+                    <button type="button" class="btn btn-info">export</button>
+                </form>
             </div>
             <div><button type="button" id="tambah" class="btn btn-primary">Tambah</button></div>
         </div>
+
         <table class="table table-hover" id="myTable" style="width:100%">
             <thead>
                 <tr class="">
@@ -41,6 +45,11 @@
                         <div class="modal-body">
 
                             <div class="mb-3">
+                                <label for="" class="">Tanggal Masuk</label>
+                                <input type="date" name="tanggal" id="tanggal" class="form-control">
+                                <div id="error-tanggal" class="text-danger"></div>
+                            </div>
+                            <div class="mb-3">
                                 <label for="" class="">Jenis Pekerjaan</label>
                                 <select name="jenis_pekerjaan" id="jenis_pekerjaan" class="form-control">
                                     <option value="">Pilih salah satu</option>
@@ -70,7 +79,6 @@
                                 <input type="text" name="bank_name" id="bank_name" class="form-control">
                                 <div id="error-bank_name" class="text-danger"></div>
                             </div>
-
                             <div class="mb-3">
                                 <label for="" class="">Document</label>
                                 <input type="file" name="document[]" id="document" class="form-control" multiple>
@@ -117,7 +125,12 @@
                 responsive: true,
                 processing: true,
                 serverside: true,
+
+                "search": {
+                    "smart": false
+                },
                 ajax: '/data-user',
+
                 columns: [{
                         data: 'checkbox',
                         name: 'checkbox',
@@ -125,8 +138,9 @@
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
                     }, {
-                        name: 'created_at',
-                        data: 'created_at',
+                        name: 'tanggal',
+                        data: 'tanggal',
+
                         render: function(data) {
                             var date = new Date(data)
                             let month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
@@ -137,7 +151,10 @@
                             let d = date.getDate();
                             let y = date.getFullYear();
 
-                            return "<span >" + d + " " + m + " " + y + "</span>"
+                            return "<span class='text-nowrap'>" + d + " " + m + " " + y +
+                                "</span>";
+
+
                         }
 
                     }, {
@@ -172,9 +189,7 @@
                     {
                         name: 'proses_sertifikat',
                         data: 'proses_sertifikat',
-                        render: function(data) {
-                            return "<div class='masuk'><span>" + data + "</span></div>"
-                        }
+
                     },
                     {
                         name: 'action',
@@ -187,15 +202,19 @@
                     $('#myTable tbody tr').css('background-color', '#f5f5f5');
                     $('.child-cb').prop('checked', true);
                     $('#hapus').prop('disabled', false);
+                    $('#keluar').prop('disabled', false);
 
 
                 } else {
+                    $('#keluar').prop('disabled', true);
                     $('#hapus').prop('disabled', true);
                     $('.child-cb').prop('checked', false);
                     $('#myTable tbody tr').css('background-color', '');
                 }
             });
-
+            $('#collapse-btn').on('click', function() {
+                $('#id').collapse('toggle');
+            })
             $('#myTable tbody').on('click', '.child-cb', function() {
                 var uncheckedCheckboxes = $('#myTable tbody .child-cb:not(:checked)');
                 uncheckedCheckboxes.closest('tr').css('background-color', '');
@@ -207,6 +226,7 @@
                 let active_checkbox = (all_checkbox.length > 0);
                 // console.log(all_checkbox.val());
                 $('#hapus').prop('disabled', !active_checkbox);
+                $('#keluar').prop('disabled', !active_checkbox);
             });
             $('#tambah').click(function(e) {
                 e.preventDefault();
@@ -222,6 +242,7 @@
                     formData.append('proses_permohonan', $('#proses_permohonan').val());
                     formData.append('bank_name', $('#bank_name').val());
                     formData.append('keterangan', $('#keterangan').val());
+                    formData.append('tanggal', $('#tanggal').val());
                     var file = $('#document')[0].files;
                     for (i = 0; i < file.length; i++) {
                         formData.append('document[]', $('#document')[0].files[i]);
@@ -283,7 +304,6 @@
             });
             $('.close').click(function() {
                 $('#tambah-modal').modal('hide');
-                $('#tambah-modal').modal('hide');
                 $('#penanggung_jawab_id').val('');
                 $('#nama_pemohon').val('');
                 $('#no_akta').val('');
@@ -292,6 +312,7 @@
                 $('#bank_name').val('');
                 $('#keterangan').val('');
                 $('#document').val('');
+                $('#tanggal').val('');
                 $('#error-penanggung_jawab_id').text("");
                 $('#error-jenis_pekerjaan').text("");
                 $('#error-document').text("");
@@ -305,6 +326,7 @@
                     type: "GET",
                     url: 'purposes/' + id + '/edit',
                     success: function(response) {
+                        console.log(response.success)
                         $('#tambah-modal').modal('show');
                         $('#penanggung_jawab_id').val(response.success
                             .penanggung_jawab_id);
@@ -316,6 +338,7 @@
                         $('#document').val(response.success.document);
                         $('#bank_name').val(response.success.bank_name);
                         $('#keterangan').val(response.success.keterangan);
+                        $('#tanggal').val(response.success.tanggal);
                     },
                 });
                 $('.submit').off('click');
@@ -329,6 +352,7 @@
                     formData.append('proses_permohonan', $('#proses_permohonan').val());
                     formData.append('bank_name', $('#bank_name').val());
                     formData.append('keterangan', $('#keterangan').val());
+                    formData.append('tanggal', $('#tanggal').val());
                     var file = $('#document')[0].files;
                     for (i = 0; i < file.length; i++) {
                         formData.append('document[]', $('#document')[0].files[i]);
@@ -354,6 +378,8 @@
                                 $('#proses_permohonan').val('');
                                 $('#jenis_pekerjaan').val("");
                                 $('#document').val("");
+                                $('#tanggal').val("");
+                                $('#bank_name').val("");
                                 $('#tambah-modal').modal('hide');
                                 const Toast = Swal.mixin({
                                     width: 400,
@@ -512,6 +538,75 @@
 
             swalWithBootstrapButtons.fire({
                 title: 'Are you sure?',
+                text: "Ingin merubah semua opsi menjadi keluar?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya!',
+                cancelButtonText: 'No, cancel!',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    for (var i = 0; i < all_checked.length; i++) {
+                        $.ajax({
+                            method: 'DELETE',
+                            url: "{{ url('purposes') }}" + '/' + all_checked[i],
+                        })
+                    }
+                    const Toast = Swal.mixin({
+                        width: 400,
+                        padding: 18,
+                        toast: true,
+                        position: 'bottom-end',
+                        showConfirmButton: false,
+                        timer: 1500,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter',
+                                Swal.stopTimer)
+                            toast.addEventListener('mouseleave',
+                                Swal.resumeTimer)
+                        }
+                    })
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'berhasil konfirmasi'
+                    });
+
+                    $('#myTable').DataTable().ajax.reload();
+                    $('#head-cb').prop('checked', false);
+                    $('#keluar').prop('disabled', true);
+                } else if (
+                    /* Read more about handling dismissals below */
+                    result.dismiss === Swal.DismissReason.cancel
+                ) {
+                    swalWithBootstrapButtons.fire(
+                        'Cancelled',
+                        'Your imaginary file is safe :)',
+                        'error'
+                    )
+                }
+            })
+
+
+
+        }
+
+        function keluar() {
+            var checkbox_checked = $('#myTable tbody .child-cb:checked');
+            let all_checked = [];
+            $.each(checkbox_checked, function(index, value) {
+                all_checked.push(value.value);
+            });
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger'
+                },
+                buttonsStyling: false
+            })
+
+            swalWithBootstrapButtons.fire({
+                title: 'Are you sure?',
                 text: "You won't be able to revert this!",
                 icon: 'warning',
                 showCancelButton: true,
@@ -522,8 +617,8 @@
                 if (result.isConfirmed) {
                     for (var i = 0; i < all_checked.length; i++) {
                         $.ajax({
-                            method: 'DELETE',
-                            url: "{{ url('purposes') }}" + '/' + all_checked[i],
+                            method: 'POST',
+                            url: "{{ url('purposes/end') }}" + '/' + all_checked[i],
                         })
                     }
                     const Toast = Swal.mixin({
