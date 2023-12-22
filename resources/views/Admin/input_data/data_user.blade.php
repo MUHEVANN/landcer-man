@@ -6,7 +6,7 @@
                 <button type="button" onclick="hapus()" id="hapus" class="btn btn-danger" disabled>Hapus</button>
                 <button type="button" onclick="keluar()" id="keluar" class="btn btn-danger" disabled>Selesai</button>
                 <form action="{{ route('export') }}" method="GET">
-                    <button type="button" class="btn btn-info">export</button>
+                    <button class="btn btn-info">export</button>
                 </form>
             </div>
             <div><button type="button" id="tambah" class="btn btn-primary">Tambah</button></div>
@@ -326,7 +326,7 @@
                     type: "GET",
                     url: 'purposes/' + id + '/edit',
                     success: function(response) {
-                        console.log(response.success)
+
                         $('#tambah-modal').modal('show');
                         $('#penanggung_jawab_id').val(response.success
                             .penanggung_jawab_id);
@@ -380,6 +380,7 @@
                                 $('#document').val("");
                                 $('#tanggal').val("");
                                 $('#bank_name').val("");
+                                $('#tanggal').val("");
                                 $('#tambah-modal').modal('hide');
                                 const Toast = Swal.mixin({
                                     width: 400,

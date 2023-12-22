@@ -59,8 +59,6 @@ class DataUserController extends Controller
             'penanggung_jawab_id' => 'required',
             'document.*' => 'required',
             'jenis_pekerjaan' => 'required',
-
-
         ]);
         if ($validate->fails()) {
             return response()->json(['error' => $validate->messages()]);

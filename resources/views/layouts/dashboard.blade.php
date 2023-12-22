@@ -109,14 +109,6 @@
                             <div data-i18n="Analytics">Semua Data</div>
                         </a>
                     </li>
-                    <li class="menu-header small text-uppercase"><span class="menu-header-text">Account</span></li>
-                    <li class="menu-item">
-                        <a href="{{ url('logout') }}" class="menu-link">
-                            <i class='bx bx-log-out menu-icon tf-icons text-danger'></i>
-                            <div data-i18n="Tables" class="text-danger">Logout</div>
-                        </a>
-                    </li>
-
                 </ul>
             </aside>
             <!-- / Menu -->
