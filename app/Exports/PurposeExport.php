@@ -26,7 +26,7 @@ class PurposeExport implements FromCollection, WithMapping, WithHeadings
         $this->no++;
         return [
             $this->no,
-            $purpose->created_at->format('d F Y'),
+            $purpose->tanggal->format('d F Y'),
             $purpose->jenis_pekerjaan,
             $purpose->no_akta,
             $purpose->proses_permohonan,
